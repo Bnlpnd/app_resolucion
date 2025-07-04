@@ -1,0 +1,295 @@
+{% extends 'resoluciones/base.html' %}
+
+{% block title %}Resolución {{ resolucion.num_resolucion }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-file-earmark-text"></i> Resolución {{ resolucion.num_resolucion }}
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'lista_resoluciones' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            
+            {% for group in user_groups %}
+                {% if group == 'Obras' and resolucion.usuario == user %}
+                    <a href="{% url 'editar_resolucion' resolucion.pk %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                {% endif %}
+                
+                {% if group == 'Fiscalización' %}
+                    <button type="button" class="btn btn-sm btn-success">
+                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                    </button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Información Principal -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Información Principal
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>N° Resolución:</strong><br>
+                        <span class="fs-5 text-primary">{{ resolucion.num_resolucion }}</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>N° Expediente:</strong><br>
+                        <span class="fs-5">{{ resolucion.num_expediente }}</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>N° Recibo:</strong><br>
+                        {{ resolucion.num_recibo|default:"No especificado" }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Tipo de Licencia:</strong><br>
+                        <span class="badge bg-info fs-6">{{ resolucion.nombre_licencia.nombre_licencia }}</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Fecha de Emisión:</strong><br>
+                        {{ resolucion.fecha_emision|date:"d/m/Y" }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Fecha de Vencimiento:</strong><br>
+                        {{ resolucion.fecha_vencimiento|date:"d/m/Y" }}
+                        {% now "Y-m-d" as today %}
+                        {% if resolucion.fecha_vencimiento|date:"Y-m-d" < today %}
+                            <span class="badge bg-danger ms-2">Vencida</span>
+                        {% elif resolucion.fecha_vencimiento|date:"Y-m-d" == today %}
+                            <span class="badge bg-warning ms-2">Vence Hoy</span>
+                        {% else %}
+                            <span class="badge bg-success ms-2">Vigente</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Administrado:</strong><br>
+                    {{ resolucion.administrado }}
+                    {% if resolucion.propietario %}
+                        <span class="badge bg-secondary ms-2">Propietario</span>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <strong>Dirección:</strong><br>
+                        {{ resolucion.direccion }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <strong>Calle:</strong><br>
+                        {{ resolucion.calle }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detalle Técnico -->
+        {% if detalle %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-building"></i> Detalle Técnico
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Zonificación:</strong><br>
+                        {{ detalle.zonificacion.zonificacion }}
+                        <div class="text-muted small">
+                            {{ detalle.zonificacion.distrito }}, {{ detalle.zonificacion.provincia }}
+                            <br>{{ detalle.zonificacion.departamento }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Área Techada Total:</strong><br>
+                        <span class="fs-5">{{ detalle.areatechada_total }} m²</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Detalle del Área Techada:</strong><br>
+                    <div class="border rounded p-3 bg-light">
+                        {{ detalle.detalle_areatechada|linebreaks }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <strong>N° de Pisos:</strong><br>
+                        <span class="fs-5">{{ detalle.num_pisos }}</span>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <strong>Altura:</strong><br>
+                        <span class="fs-5">{{ detalle.altura }} m</span>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <strong>N° Sótanos:</strong><br>
+                        <span class="fs-5">{{ detalle.num_sotano }}</span>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <strong>Semisótano:</strong><br>
+                        {% if detalle.semisotano %}
+                            <span class="badge bg-success">Sí</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Responsable de Obra -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge"></i> Responsable de Obra
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-1">{{ detalle.responsable_obra.nombre }}</h6>
+                        <p class="text-muted mb-0">CIP/CAP: {{ detalle.responsable_obra.cip_cap }}</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <i class="bi bi-person-circle text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">Detalle Técnico No Disponible</h5>
+                <p class="text-muted">No se ha registrado el detalle técnico para esta resolución.</p>
+                {% for group in user_groups %}
+                    {% if group == 'Obras' and resolucion.usuario == user %}
+                        <a href="{% url 'editar_resolucion' resolucion.pk %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Agregar Detalle
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar con información adicional -->
+    <div class="col-md-4">
+        <!-- Estado de la Resolución -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock"></i> Estado
+                </h6>
+            </div>
+            <div class="card-body">
+                {% now "Y-m-d" as today %}
+                {% if resolucion.fecha_vencimiento|date:"Y-m-d" < today %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Vencida</strong><br>
+                        Venció el {{ resolucion.fecha_vencimiento|date:"d/m/Y" }}
+                    </div>
+                {% elif resolucion.fecha_vencimiento|date:"Y-m-d" == today %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Vence Hoy</strong><br>
+                        Fecha límite: {{ resolucion.fecha_vencimiento|date:"d/m/Y" }}
+                    </div>
+                {% else %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <strong>Vigente</strong><br>
+                        Vence el {{ resolucion.fecha_vencimiento|date:"d/m/Y" }}
+                    </div>
+                {% endif %}
+                
+                {% with resolucion.fecha_vencimiento|timeuntil as tiempo_restante %}
+                    {% if resolucion.fecha_vencimiento|date:"Y-m-d" >= today %}
+                        <p class="mb-0 text-muted small">
+                            Tiempo restante: {{ tiempo_restante }}
+                        </p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        
+        <!-- Información del Usuario -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-person"></i> Registrado por
+                </h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-1"><strong>{{ resolucion.usuario.get_full_name|default:resolucion.usuario.username }}</strong></p>
+                <p class="text-muted small mb-0">{{ resolucion.usuario.email }}</p>
+                <hr>
+                <p class="text-muted small mb-0">
+                    Perfil: 
+                    {% for group in resolucion.usuario.groups.all %}
+                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Sin asignar
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        
+        <!-- Acciones Rápidas -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning"></i> Acciones Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% for group in user_groups %}
+                        {% if group == 'Obras' and resolucion.usuario == user %}
+                            <a href="{% url 'editar_resolucion' resolucion.pk %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Editar Resolución
+                            </a>
+                        {% endif %}
+                        
+                        {% if group == 'Fiscalización' %}
+                            <button type="button" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-file-earmark-pdf"></i> Generar PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-printer"></i> Imprimir
+                            </button>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <a href="{% url 'lista_resoluciones' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-list"></i> Ver Todas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

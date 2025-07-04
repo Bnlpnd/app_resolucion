@@ -1,0 +1,57 @@
+<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+    <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'dashboard' %}">
+                    <i class="bi bi-house"></i> Dashboard
+                </a>
+            </li>
+            
+            {% for group in user.groups.all %}
+                {% if group.name == 'Obras' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'crear_resolucion' %}">
+                            <i class="bi bi-plus-circle"></i> Nueva Resolución
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mis_resoluciones' %}">
+                            <i class="bi bi-folder"></i> Mis Resoluciones
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% if group.name == 'Fiscalización' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_resoluciones' %}">
+                            <i class="bi bi-search"></i> Buscar Resoluciones
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'lista_resoluciones' %}">
+                    <i class="bi bi-list"></i> Todas las Resoluciones
+                </a>
+            </li>
+        </ul>
+        
+        <hr>
+        
+        <div class="px-3">
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center text-muted">
+                <span>Usuario</span>
+            </h6>
+            <p class="text-sm mb-1">{{ user.get_full_name|default:user.username }}</p>
+            <p class="text-xs text-muted mb-0">
+                Perfil: 
+                {% for group in user.groups.all %}
+                    {{ group.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    Sin asignar
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</nav> 

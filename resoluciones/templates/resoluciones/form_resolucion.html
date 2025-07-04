@@ -1,0 +1,370 @@
+{% extends 'resoluciones/base.html' %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-file-earmark-plus"></i> {{ title }}
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'lista_resoluciones' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+</div>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Datos de la Resolución -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-text"></i> Datos de la Resolución
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.num_resolucion.id_for_label }}" class="form-label">
+                                {{ resolucion_form.num_resolucion.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.num_resolucion }}
+                            {% if resolucion_form.num_resolucion.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.num_resolucion.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.num_expediente.id_for_label }}" class="form-label">
+                                {{ resolucion_form.num_expediente.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.num_expediente }}
+                            {% if resolucion_form.num_expediente.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.num_expediente.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.num_recibo.id_for_label }}" class="form-label">
+                                {{ resolucion_form.num_recibo.label }}
+                            </label>
+                            {{ resolucion_form.num_recibo }}
+                            {% if resolucion_form.num_recibo.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.num_recibo.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.nombre_licencia.id_for_label }}" class="form-label">
+                                {{ resolucion_form.nombre_licencia.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.nombre_licencia }}
+                            {% if resolucion_form.nombre_licencia.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.nombre_licencia.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.fecha_emision.id_for_label }}" class="form-label">
+                                {{ resolucion_form.fecha_emision.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.fecha_emision }}
+                            {% if resolucion_form.fecha_emision.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.fecha_emision.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ resolucion_form.fecha_vencimiento.id_for_label }}" class="form-label">
+                                {{ resolucion_form.fecha_vencimiento.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.fecha_vencimiento }}
+                            {% if resolucion_form.fecha_vencimiento.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.fecha_vencimiento.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ resolucion_form.administrado.id_for_label }}" class="form-label">
+                            {{ resolucion_form.administrado.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ resolucion_form.administrado }}
+                        {% if resolucion_form.administrado.errors %}
+                            <div class="text-danger small">
+                                {{ resolucion_form.administrado.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ resolucion_form.direccion.id_for_label }}" class="form-label">
+                            {{ resolucion_form.direccion.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ resolucion_form.direccion }}
+                        {% if resolucion_form.direccion.errors %}
+                            <div class="text-danger small">
+                                {{ resolucion_form.direccion.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="{{ resolucion_form.calle.id_for_label }}" class="form-label">
+                                {{ resolucion_form.calle.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ resolucion_form.calle }}
+                            {% if resolucion_form.calle.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.calle.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4 pt-2">
+                                {{ resolucion_form.propietario }}
+                                <label class="form-check-label" for="{{ resolucion_form.propietario.id_for_label }}">
+                                    {{ resolucion_form.propietario.label }}
+                                </label>
+                            </div>
+                            {% if resolucion_form.propietario.errors %}
+                                <div class="text-danger small">
+                                    {{ resolucion_form.propietario.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detalle de la Resolución -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building"></i> Detalle de la Resolución
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.zonificacion.id_for_label }}" class="form-label">
+                                {{ detalle_form.zonificacion.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ detalle_form.zonificacion }}
+                            {% if detalle_form.zonificacion.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.zonificacion.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.areatechada_total.id_for_label }}" class="form-label">
+                                {{ detalle_form.areatechada_total.label }} (m²) <span class="text-danger">*</span>
+                            </label>
+                            {{ detalle_form.areatechada_total }}
+                            {% if detalle_form.areatechada_total.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.areatechada_total.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ detalle_form.detalle_areatechada.id_for_label }}" class="form-label">
+                            {{ detalle_form.detalle_areatechada.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ detalle_form.detalle_areatechada }}
+                        {% if detalle_form.detalle_areatechada.errors %}
+                            <div class="text-danger small">
+                                {{ detalle_form.detalle_areatechada.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ detalle_form.num_pisos.id_for_label }}" class="form-label">
+                                {{ detalle_form.num_pisos.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ detalle_form.num_pisos }}
+                            {% if detalle_form.num_pisos.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.num_pisos.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ detalle_form.altura.id_for_label }}" class="form-label">
+                                {{ detalle_form.altura.label }} (m) <span class="text-danger">*</span>
+                            </label>
+                            {{ detalle_form.altura }}
+                            {% if detalle_form.altura.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.altura.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ detalle_form.num_sotano.id_for_label }}" class="form-label">
+                                {{ detalle_form.num_sotano.label }}
+                            </label>
+                            {{ detalle_form.num_sotano }}
+                            {% if detalle_form.num_sotano.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.num_sotano.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ detalle_form.semisotano }}
+                            <label class="form-check-label" for="{{ detalle_form.semisotano.id_for_label }}">
+                                {{ detalle_form.semisotano.label }}
+                            </label>
+                        </div>
+                        {% if detalle_form.semisotano.errors %}
+                            <div class="text-danger small">
+                                {{ detalle_form.semisotano.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Responsable de Obra -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge"></i> Responsable de Obra
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="{{ detalle_form.responsable_obra.id_for_label }}" class="form-label">
+                            Seleccionar Responsable Existente
+                        </label>
+                        {{ detalle_form.responsable_obra }}
+                        {% if detalle_form.responsable_obra.errors %}
+                            <div class="text-danger small">
+                                {{ detalle_form.responsable_obra.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle"></i> {{ detalle_form.nuevo_responsable.help_text }}
+                    </p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.nuevo_responsable.id_for_label }}" class="form-label">
+                                {{ detalle_form.nuevo_responsable.label }}
+                            </label>
+                            {{ detalle_form.nuevo_responsable }}
+                            {% if detalle_form.nuevo_responsable.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.nuevo_responsable.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.nuevo_cip_cap.id_for_label }}" class="form-label">
+                                {{ detalle_form.nuevo_cip_cap.label }}
+                            </label>
+                            {{ detalle_form.nuevo_cip_cap }}
+                            <div class="form-text">{{ detalle_form.nuevo_cip_cap.help_text }}</div>
+                            {% if detalle_form.nuevo_cip_cap.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.nuevo_cip_cap.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Errores generales del formulario -->
+                    {% if detalle_form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ detalle_form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar con información -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle"></i> Información
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text small">
+                        <strong>Campos requeridos:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                    </p>
+                    
+                    <p class="card-text small">
+                        <strong>Responsable de Obra:</strong> Puede seleccionar un responsable existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
+                    </p>
+                    
+                    {% if resolucion %}
+                        <hr>
+                        <p class="card-text small text-muted">
+                            <strong>Última modificación:</strong><br>
+                            {{ resolucion.fecha_emision|date:"d/m/Y" }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'lista_resoluciones' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> 
+                    {% if resolucion %}Actualizar{% else %}Crear{% endif %} Resolución
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %} 

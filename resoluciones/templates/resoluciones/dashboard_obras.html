@@ -1,0 +1,110 @@
+{% extends 'resoluciones/base.html' %}
+
+{% block title %}Dashboard - Obras - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-house"></i> Dashboard - Perfil Obras
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'crear_resolucion' %}" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-circle"></i> Nueva Resolución
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-plus-circle-fill text-primary" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Nueva Resolución</h5>
+                <p class="card-text">Registre una nueva resolución de licencia de construcción.</p>
+                <a href="{% url 'crear_resolucion' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Crear Resolución
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-folder-fill text-success" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Mis Resoluciones</h5>
+                <p class="card-text">Ver y gestionar las resoluciones que he registrado.</p>
+                <a href="{% url 'mis_resoluciones' %}" class="btn btn-success">
+                    <i class="bi bi-folder"></i> Ver Mis Resoluciones
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history"></i> Últimas Resoluciones Registradas
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user.resoluciones.all %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>N° Resolución</th>
+                                    <th>N° Expediente</th>
+                                    <th>Administrado</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for resolucion in user.resoluciones.all|slice:":5" %}
+                                <tr>
+                                    <td>{{ resolucion.num_resolucion }}</td>
+                                    <td>{{ resolucion.num_expediente }}</td>
+                                    <td>{{ resolucion.administrado }}</td>
+                                    <td>{{ resolucion.fecha_emision|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'detalle_resolucion' resolucion.pk %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <a href="{% url 'editar_resolucion' resolucion.pk %}" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if user.resoluciones.count > 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'mis_resoluciones' %}" class="btn btn-outline-primary">
+                                Ver todas mis resoluciones ({{ user.resoluciones.count }})
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">Aún no has registrado ninguna resolución.</p>
+                        <a href="{% url 'crear_resolucion' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Crear mi primera resolución
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
