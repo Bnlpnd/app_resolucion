@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="{{ resolucion_form.num_recibo.id_for_label }}" class="form-label">
-                                {{ resolucion_form.num_recibo.label }}
+                                {{ resolucion_form.num_recibo.label }} <span class="text-danger">*</span>
                             </label>
                             {{ resolucion_form.num_recibo }}
                             {% if resolucion_form.num_recibo.errors %}
@@ -121,7 +121,7 @@
                     
                     <div class="mb-3">
                         <label for="{{ resolucion_form.direccion.id_for_label }}" class="form-label">
-                            {{ resolucion_form.direccion.label }} <span class="text-danger">*</span>
+                            {{ resolucion_form.direccion.label }} 
                         </label>
                         {{ resolucion_form.direccion }}
                         {% if resolucion_form.direccion.errors %}
@@ -134,7 +134,7 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label for="{{ resolucion_form.calle.id_for_label }}" class="form-label">
-                                {{ resolucion_form.calle.label }} <span class="text-danger">*</span>
+                                {{ resolucion_form.calle.label }}
                             </label>
                             {{ resolucion_form.calle }}
                             {% if resolucion_form.calle.errors %}
@@ -184,7 +184,7 @@
                         
                         <div class="col-md-6 mb-3">
                             <label for="{{ detalle_form.areatechada_total.id_for_label }}" class="form-label">
-                                {{ detalle_form.areatechada_total.label }} (m²) <span class="text-danger">*</span>
+                                {{ detalle_form.areatechada_total.label }} (m²)  <span class="text-danger">*</span>
                             </label>
                             {{ detalle_form.areatechada_total }}
                             {% if detalle_form.areatechada_total.errors %}
@@ -197,7 +197,7 @@
                     
                     <div class="mb-3">
                         <label for="{{ detalle_form.detalle_areatechada.id_for_label }}" class="form-label">
-                            {{ detalle_form.detalle_areatechada.label }} <span class="text-danger">*</span>
+                            {{ detalle_form.detalle_areatechada.label }}
                         </label>
                         {{ detalle_form.detalle_areatechada }}
                         {% if detalle_form.detalle_areatechada.errors %}
@@ -222,7 +222,7 @@
                         
                         <div class="col-md-4 mb-3">
                             <label for="{{ detalle_form.altura.id_for_label }}" class="form-label">
-                                {{ detalle_form.altura.label }} (m) <span class="text-danger">*</span>
+                                {{ detalle_form.altura.label }} (ml) <span class="text-danger">*</span>
                             </label>
                             {{ detalle_form.altura }}
                             {% if detalle_form.altura.errors %}
@@ -367,4 +367,13 @@
         </div>
     </div>
 </form>
+
+<script>
+  flatpickr(".flatpickr", {
+    dateFormat: "d/m/Y",
+    locale: "es",
+    allowInput: true
+  });
+</script>
+
 {% endblock %} 

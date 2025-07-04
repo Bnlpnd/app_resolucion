@@ -30,18 +30,6 @@
         </div>
     </div>
     
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <i class="bi bi-folder-fill text-success" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Mis Resoluciones</h5>
-                <p class="card-text">Ver y gestionar las resoluciones que he registrado.</p>
-                <a href="{% url 'mis_resoluciones' %}" class="btn btn-success">
-                    <i class="bi bi-folder"></i> Ver Mis Resoluciones
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="row">
@@ -86,14 +74,7 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                    </div>
-                    {% if user.resoluciones.count > 5 %}
-                        <div class="text-center mt-3">
-                            <a href="{% url 'mis_resoluciones' %}" class="btn btn-outline-primary">
-                                Ver todas mis resoluciones ({{ user.resoluciones.count }})
-                            </a>
-                        </div>
-                    {% endif %}
+                    </div> 
                 {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>

@@ -32,8 +32,8 @@ class ResolucionForm(forms.ModelForm):
             'direccion', 'calle'
         ]
         widgets = {
-            'fecha_emision': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_emision': forms.DateInput(attrs={'class': 'form-control flatpickr'}),
+            'fecha_vencimiento': forms.DateInput(attrs={'class': 'form-control flatpickr'}),
             'num_resolucion': forms.TextInput(attrs={'class': 'form-control'}),
             'num_expediente': forms.TextInput(attrs={'class': 'form-control'}),
             'num_recibo': forms.TextInput(attrs={'class': 'form-control'}),
@@ -76,7 +76,10 @@ class DetalleResolucionForm(forms.ModelForm):
             'semisotano': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'responsable_obra': forms.Select(attrs={'class': 'form-select'}),
         }
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['responsable_obra'].required = False
+        
     def clean(self):
         cleaned_data = super().clean()
         responsable_obra = cleaned_data.get('responsable_obra')

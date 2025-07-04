@@ -16,6 +16,7 @@ class ResponsableObra(models.Model):
 
 class Zonificacion(models.Model):
     zonificacion = models.CharField(max_length=15)
+    descripcion = models.CharField(max_length=100, blank=True)
     departamento = models.CharField(max_length=100)
     provincia = models.CharField(max_length=100)
     distrito = models.CharField(max_length=100)
@@ -49,8 +50,8 @@ class Resolucion(models.Model):
     administrado = models.CharField(max_length=100)
     propietario = models.BooleanField(default=True)
     nombre_licencia = models.ForeignKey(LicenciaUso, on_delete=models.PROTECT)
-    direccion = models.CharField(max_length=300)
-    calle = models.CharField(max_length=200)
+    direccion = models.CharField(max_length=300, default='')
+    calle = models.CharField(max_length=200, default='')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resoluciones')
 
     def __str__(self):
@@ -66,9 +67,9 @@ class DetalleResolucion(models.Model):
     resolucion = models.OneToOneField(Resolucion, on_delete=models.CASCADE, null=True)
     zonificacion = models.OneToOneField(Zonificacion, on_delete=models.CASCADE)
     areatechada_total = models.DecimalField(max_digits=8, decimal_places=2)
-    detalle_areatechada = models.TextField()
+    detalle_areatechada = models.TextField(default='-')
     num_pisos = models.IntegerField()
-    altura = models.DecimalField(max_digits=5, decimal_places=2)
+    altura = models.DecimalField(max_digits=5, decimal_places=2, default='') 
     num_sotano = models.IntegerField(default=0)
     semisotano = models.BooleanField(default=False)
     responsable_obra = models.ForeignKey(ResponsableObra, on_delete=models.PROTECT)
