@@ -47,11 +47,6 @@ class ResolucionListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Resolucion.objects.all()
-        user_groups = [group.name for group in self.request.user.groups.all()]
-        
-        # Si es usuario de Obras, solo sus resoluciones
-        if 'Obras' in user_groups and 'Fiscalización' not in user_groups:
-            queryset = queryset.filter(usuario=self.request.user)
         
         # Aplicar filtros
         form = ResolucionFilterForm(self.request.GET)
@@ -89,14 +84,6 @@ class ResolucionDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        user_groups = [group.name for group in self.request.user.groups.all()]
-        
-        # Si es usuario de Obras y no es su resolución, no permitir acceso
-        if 'Obras' in user_groups and 'Fiscalización' not in user_groups:
-            if obj.usuario != self.request.user:
-                messages.error(self.request, 'No tiene permisos para ver esta resolución.')
-                return redirect('lista_resoluciones')
-        
         return obj
 
     def get_context_data(self, **kwargs):
@@ -156,8 +143,8 @@ def editar_resolucion(request, pk):
     resolucion = get_object_or_404(Resolucion, pk=pk)
     user_groups = [group.name for group in request.user.groups.all()]
     
-    # Solo usuarios de Obras pueden editar y solo sus propias resoluciones
-    if 'Obras' not in user_groups or resolucion.usuario != request.user:
+    # Solo usuarios de Obras pueden editar cualquier resolución
+    if 'Obras' not in user_groups:
         messages.error(request, 'No tiene permisos para editar esta resolución.')
         return redirect('detalle_resolucion', pk=pk)
 
@@ -207,15 +194,33 @@ def mis_resoluciones(request):
         messages.error(request, 'No tiene permisos para acceder a esta página.')
         return redirect('dashboard')
 
-    resoluciones = Resolucion.objects.filter(usuario=request.user).order_by('-fecha_emision')
+     # 1. Cargar el formulario con GET
+    filter_form = ResolucionFilterForm(request.GET or None)
+
+    # 2. Filtro base
+    resoluciones = Resolucion.objects.filter(usuario=request.user)
     
-    # Paginación
+    # 3. Aplicar filtros si válidos
+    if filter_form.is_valid():
+            cd = filter_form.cleaned_data
+            if cd.get('num_resolucion'):
+                resoluciones = resoluciones.filter(num_resolucion__icontains=cd['num_resolucion'])
+            if cd.get('num_expediente'):
+                resoluciones = resoluciones.filter(num_expediente__icontains=cd['num_expediente'])
+            if cd.get('administrado'):
+                resoluciones = resoluciones.filter(administrado__icontains=cd['administrado'])
+            if cd.get('nombre_licencia'):
+                resoluciones = resoluciones.filter(nombre_licencia=cd['nombre_licencia'])
+
+    # Orden y paginación
+    resoluciones = resoluciones.order_by('-fecha_emision')
     paginator = Paginator(resoluciones, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         'resoluciones': page_obj,
+        'filter_form': filter_form,
         'user_groups': user_groups,
         'title': 'Mis Resoluciones'
     }
