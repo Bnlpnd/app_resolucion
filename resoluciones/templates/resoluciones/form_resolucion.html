@@ -219,7 +219,19 @@
                                 </div>
                             {% endif %}
                         </div>
-                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ detalle_form.azotea }}
+                                <label class="form-check-label" for="{{ detalle_form.azotea.id_for_label }}">
+                                    {{ detalle_form.azotea.label }}
+                                </label>
+                            </div>
+                            {% if detalle_form.azotea.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.azotea.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
                         <div class="col-md-4 mb-3">
                             <label for="{{ detalle_form.altura.id_for_label }}" class="form-label">
                                 {{ detalle_form.altura.label }} (ml) <span class="text-danger">*</span>
@@ -314,11 +326,80 @@
                         </div>
                     </div>
                     
-                    <!-- Errores generales del formulario -->
-                    {% if detalle_form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ detalle_form.non_field_errors }}
+                    <!-- Errores específicos del supervisor -->
+                    {% if detalle_form.errors %}
+                        {% for field, errors in detalle_form.errors.items %}
+                            {% if 'supervisor' in field or 'nuevo_supervisor' in field %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ field|title }}:</strong> {{ errors }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Supervisor de Obra -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-check"></i> Supervisor de Obra
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="{{ detalle_form.supervisor_obra.id_for_label }}" class="form-label">
+                            Seleccionar Supervisor Existente <span class="text-danger">*</span>
+                        </label>
+                        {{ detalle_form.supervisor_obra }}
+                        {% if detalle_form.supervisor_obra.errors %}
+                            <div class="text-danger small">
+                                {{ detalle_form.supervisor_obra.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle"></i> {{ detalle_form.nuevo_supervisor.help_text }}
+                    </p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.nuevo_supervisor.id_for_label }}" class="form-label">
+                                {{ detalle_form.nuevo_supervisor.label }}
+                            </label>
+                            {{ detalle_form.nuevo_supervisor }}
+                            {% if detalle_form.nuevo_supervisor.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.nuevo_supervisor.errors }}
+                                </div>
+                            {% endif %}
                         </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ detalle_form.nuevo_supervisor_cip_cap.id_for_label }}" class="form-label">
+                                {{ detalle_form.nuevo_supervisor_cip_cap.label }}
+                            </label>
+                            {{ detalle_form.nuevo_supervisor_cip_cap }}
+                            <div class="form-text">{{ detalle_form.nuevo_supervisor_cip_cap.help_text }}</div>
+                            {% if detalle_form.nuevo_supervisor_cip_cap.errors %}
+                                <div class="text-danger small">
+                                    {{ detalle_form.nuevo_supervisor_cip_cap.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Errores específicos del supervisor -->
+                    {% if detalle_form.errors %}
+                        {% for field, errors in detalle_form.errors.items %}
+                            {% if 'supervisor' in field or 'nuevo_supervisor' in field %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ field|title }}:</strong> {{ errors }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
                 </div>
             </div>
@@ -339,6 +420,10 @@
                     
                     <p class="card-text small">
                         <strong>Responsable de Obra:</strong> Puede seleccionar un responsable existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
+                    </p>
+
+                    <p class="card-text small">
+                        <strong>Supervisor de Obra:</strong> Puede seleccionar un supervisor existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
                     </p>
                     
                     {% if resolucion %}
@@ -373,6 +458,35 @@
     dateFormat: "d/m/Y",
     locale: "es",
     allowInput: true
+  });
+
+  // Limpiar campos cuando se selecciona responsable existente
+  document.getElementById('{{ detalle_form.responsable_obra.id_for_label }}').addEventListener('change', function() {
+    if (this.value) {
+      document.getElementById('{{ detalle_form.nuevo_responsable.id_for_label }}').value = '';
+      document.getElementById('{{ detalle_form.nuevo_cip_cap.id_for_label }}').value = '';
+    }
+  });
+
+  // Limpiar campos cuando se selecciona supervisor existente
+  document.getElementById('{{ detalle_form.supervisor_obra.id_for_label }}').addEventListener('change', function() {
+    if (this.value) {
+      document.getElementById('{{ detalle_form.nuevo_supervisor.id_for_label }}').value = '';
+      document.getElementById('{{ detalle_form.nuevo_supervisor_cip_cap.id_for_label }}').value = '';
+    }
+  });
+
+  // Limpiar selección cuando se escriben datos nuevos
+  document.getElementById('{{ detalle_form.nuevo_responsable.id_for_label }}').addEventListener('input', function() {
+    if (this.value) {
+      document.getElementById('{{ detalle_form.responsable_obra.id_for_label }}').value = '';
+    }
+  });
+
+  document.getElementById('{{ detalle_form.nuevo_supervisor.id_for_label }}').addEventListener('input', function() {
+    if (this.value) {
+      document.getElementById('{{ detalle_form.supervisor_obra.id_for_label }}').value = '';
+    }
   });
 </script>
 

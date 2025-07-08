@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 
 class ResponsableObra(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    cip_cap = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=100, unique=True , null=True)
+    cip_cap = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return f"{self.nombre} – CIP: {self.cip_cap}"
@@ -12,6 +12,17 @@ class ResponsableObra(models.Model):
     class Meta:
         verbose_name = "Responsable de Obra"
         verbose_name_plural = "Responsables de Obra"
+
+class SupervisorObra(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    cip_cap = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.nombre} – CIP: {self.cip_cap}"
+
+    class Meta:
+        verbose_name = "Supervisor de Obra"
+        verbose_name_plural = "Supervisores de Obra"
 
 
 class Zonificacion(models.Model):
@@ -72,10 +83,12 @@ class DetalleResolucion(models.Model):
     altura = models.DecimalField(max_digits=5, decimal_places=2, default='') 
     num_sotano = models.IntegerField(default=0)
     semisotano = models.BooleanField(default=False)
+    azotea = models.BooleanField(default=False)
     responsable_obra = models.ForeignKey(ResponsableObra, on_delete=models.PROTECT)
+    supervisor_obra = models.ForeignKey(SupervisorObra, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"Resolución: {self.resolucion} / Responsable: {self.responsable_obra}"
+        return f"Resolución: {self.resolucion} / Responsable: {self.responsable_obra} / Supervisor: {self.supervisor_obra}"
 
     class Meta:
         verbose_name = "Detalle de Resolución"

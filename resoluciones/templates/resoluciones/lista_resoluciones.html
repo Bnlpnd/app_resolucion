@@ -83,7 +83,6 @@
                         <i class="bi bi-download"></i> Exportar
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-pdf"></i> PDF</a></li>
                         <li><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-excel"></i> Excel</a></li>
                     </ul>
                 </div>
@@ -142,16 +141,6 @@
                                                title="Editar">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                        {% endif %}
-                                    {% endfor %}
-                                    
-                                    {% for group in user_groups %}
-                                        {% if group == 'Fiscalización' %}
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-outline-success"
-                                                    title="Descargar PDF">
-                                                <i class="bi bi-file-earmark-pdf"></i>
-                                            </button>
                                         {% endif %}
                                     {% endfor %}
                                 </div>

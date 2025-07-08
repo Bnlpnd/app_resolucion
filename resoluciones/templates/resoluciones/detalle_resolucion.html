@@ -19,12 +19,7 @@
                         <i class="bi bi-pencil"></i> Editar
                     </a>
                 {% endif %}
-                
-                {% if group == 'Fiscalización' %}
-                    <button type="button" class="btn btn-sm btn-success">
-                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-                    </button>
-                {% endif %}
+                 
             {% endfor %}
         </div>
     </div>
@@ -139,6 +134,14 @@
                         <span class="fs-5">{{ detalle.num_pisos }}</span>
                     </div>
                     <div class="col-md-3 mb-3">
+                        <strong>Azotea:</strong><br>
+                        {% if detalle.azotea %}
+                            <span class="badge bg-success">Sí</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3 mb-3">
                         <strong>Altura:</strong><br>
                         <span class="fs-5">{{ detalle.altura }} m</span>
                     </div>
@@ -171,8 +174,21 @@
                         <h6 class="mb-1">{{ detalle.responsable_obra.nombre }}</h6>
                         <p class="text-muted mb-0">CIP/CAP: {{ detalle.responsable_obra.cip_cap }}</p>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <i class="bi bi-person-circle text-muted" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Supervisor de Obra -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge"></i> Supervisor de Obra
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-1">{{ detalle.supervisor_obra.nombre }}</h6>
+                        <p class="text-muted mb-0">{{ detalle.supervisor_obra.cip_cap }}</p>
                     </div>
                 </div>
             </div>
@@ -220,7 +236,7 @@
                     </div>
                 {% else %}
                     <div class="alert alert-success">
-                        <i class="bi bi-check-circle-fill"></i>
+                        <i classx="bi bi-check-circle-fill"></i>
                         <strong>Vigente</strong><br>
                         Vence el {{ resolucion.fecha_vencimiento|date:"d/m/Y" }}
                     </div>
@@ -274,14 +290,6 @@
                             </a>
                         {% endif %}
                         
-                        {% if group == 'Fiscalización' %}
-                            <button type="button" class="btn btn-outline-success btn-sm">
-                                <i class="bi bi-file-earmark-pdf"></i> Generar PDF
-                            </button>
-                            <button type="button" class="btn btn-outline-info btn-sm">
-                                <i class="bi bi-printer"></i> Imprimir
-                            </button>
-                        {% endif %}
                     {% endfor %}
                     
                     <a href="{% url 'lista_resoluciones' %}" class="btn btn-outline-secondary btn-sm">
