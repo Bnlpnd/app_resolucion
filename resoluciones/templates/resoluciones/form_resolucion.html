@@ -121,7 +121,7 @@
                     
                     <div class="mb-3">
                         <label for="{{ resolucion_form.direccion.id_for_label }}" class="form-label">
-                            {{ resolucion_form.direccion.label }} 
+                            {{ resolucion_form.direccion.label }} <span class="text-muted">(opcional)</span>
                         </label>
                         {{ resolucion_form.direccion }}
                         {% if resolucion_form.direccion.errors %}
@@ -134,7 +134,7 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label for="{{ resolucion_form.calle.id_for_label }}" class="form-label">
-                                {{ resolucion_form.calle.label }}
+                                {{ resolucion_form.calle.label }} <span class="text-muted">(opcional)</span>
                             </label>
                             {{ resolucion_form.calle }}
                             {% if resolucion_form.calle.errors %}
@@ -197,7 +197,7 @@
                     
                     <div class="mb-3">
                         <label for="{{ detalle_form.detalle_areatechada.id_for_label }}" class="form-label">
-                            {{ detalle_form.detalle_areatechada.label }}
+                            {{ detalle_form.detalle_areatechada.label }} <span class="text-muted">(opcional)</span>
                         </label>
                         {{ detalle_form.detalle_areatechada }}
                         {% if detalle_form.detalle_areatechada.errors %}
@@ -326,12 +326,18 @@
                         </div>
                     </div>
                     
-                    <!-- Errores específicos del supervisor -->
+                    <!-- Errores específicos del responsable -->
                     {% if detalle_form.errors %}
                         {% for field, errors in detalle_form.errors.items %}
-                            {% if 'supervisor' in field or 'nuevo_supervisor' in field %}
+                            {% if 'responsable' in field or 'nuevo_responsable' in field or 'nuevo_cip_cap' in field %}
                                 <div class="alert alert-danger">
-                                    <strong>{{ field|title }}:</strong> {{ errors }}
+                                    <strong>
+                                        {% if field == 'responsable_obra' %}Responsable de Obra
+                                        {% elif field == 'nuevo_responsable' %}Nuevo Responsable
+                                        {% elif field == 'nuevo_cip_cap' %}CIP/CAP del Responsable
+                                        {% else %}{{ field|title }}
+                                        {% endif %}:
+                                    </strong> {{ errors.0 }}
                                 </div>
                             {% endif %}
                         {% endfor %}
@@ -396,7 +402,13 @@
                         {% for field, errors in detalle_form.errors.items %}
                             {% if 'supervisor' in field or 'nuevo_supervisor' in field %}
                                 <div class="alert alert-danger">
-                                    <strong>{{ field|title }}:</strong> {{ errors }}
+                                    <strong>
+                                        {% if field == 'supervisor_obra' %}Supervisor de Obra
+                                        {% elif field == 'nuevo_supervisor' %}Nuevo Supervisor
+                                        {% elif field == 'nuevo_supervisor_cip_cap' %}CIP/CAP del Supervisor
+                                        {% else %}{{ field|title }}
+                                        {% endif %}:
+                                    </strong> {{ errors.0 }}
                                 </div>
                             {% endif %}
                         {% endfor %}

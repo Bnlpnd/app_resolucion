@@ -61,8 +61,8 @@ class Resolucion(models.Model):
     administrado = models.CharField(max_length=100)
     propietario = models.BooleanField(default=True)
     nombre_licencia = models.ForeignKey(LicenciaUso, on_delete=models.PROTECT)
-    direccion = models.CharField(max_length=300, default='')
-    calle = models.CharField(max_length=200, default='')
+    direccion = models.CharField(max_length=300, blank=True, default='')
+    calle = models.CharField(max_length=200, blank=True, default='')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resoluciones')
 
     def __str__(self):
@@ -76,9 +76,9 @@ class Resolucion(models.Model):
 
 class DetalleResolucion(models.Model):
     resolucion = models.OneToOneField(Resolucion, on_delete=models.CASCADE, null=True)
-    zonificacion = models.OneToOneField(Zonificacion, on_delete=models.CASCADE)
+    zonificacion = models.ForeignKey(Zonificacion, on_delete=models.CASCADE)
     areatechada_total = models.DecimalField(max_digits=8, decimal_places=2)
-    detalle_areatechada = models.TextField(default='-')
+    detalle_areatechada = models.TextField(blank=True, default='-')
     num_pisos = models.IntegerField()
     altura = models.DecimalField(max_digits=5, decimal_places=2, default='') 
     num_sotano = models.IntegerField(default=0)
