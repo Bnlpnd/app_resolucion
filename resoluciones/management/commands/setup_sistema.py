@@ -1,103 +1,103 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, User
-from resoluciones.models import LicenciaUso, Zonificacion, ResponsableObra
-
+from django.contrib.auth.models import Group
+from app_resolucion.models import LicenciaUso, ResponsableObra, Zonificacion, SupervisorObra
 
 class Command(BaseCommand):
-    help = 'Configura el sistema creando grupos de usuarios y datos de ejemplo'
+    help = 'Inicializa datos base del sistema'
 
-    def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Configurando el sistema...'))
-        
-        # Crear grupos de usuarios
-        self.create_groups()
-        
-        # Crear datos de ejemplo
-        self.create_sample_data()
-        
-        self.stdout.write(self.style.SUCCESS('Sistema configurado exitosamente!'))
+    def handle(self, *args, **kwargs):
+        self.crear_grupos()
+        self.crear_licencias()
+        self.crear_responsables()
+        self.crear_supervisores()
+        self.crear_zonificaciones()
 
-    def create_groups(self):
-        """Crea los grupos de usuarios Obras y Fiscalización"""
-        self.stdout.write('Creando grupos de usuarios...')
-        
-        obras_group, created = Group.objects.get_or_create(name='Obras')
-        if created:
-            self.stdout.write(f'  ✓ Grupo "Obras" creado')
-        else:
-            self.stdout.write(f'  - Grupo "Obras" ya existe')
-            
-        fiscalizacion_group, created = Group.objects.get_or_create(name='Fiscalización')
-        if created:
-            self.stdout.write(f'  ✓ Grupo "Fiscalización" creado')
-        else:
-            self.stdout.write(f'  - Grupo "Fiscalización" ya existe')
+    def crear_grupos(self):
+        for nombre in ['Obras', 'Fiscalización']:
+            grupo, creado = Group.objects.get_or_create(name=nombre)
+            mensaje = '✓ Grupo creado' if creado else '- Grupo ya existía'
+            self.stdout.write(f'{mensaje}: {nombre}')
 
-    def create_sample_data(self):
-        """Crea datos de ejemplo para licencias, zonificaciones y responsables"""
-        self.stdout.write('Creando datos de ejemplo...')
-        
-        # Crear licencias de uso
+    def crear_licencias(self):
         licencias = [
-            ('Licencia de Construcción Común', 'Uso residencial'),
-            ('Licencia de Construcción Especial', 'Uso comercial'),
-            ('Licencia de Construcción de Densidad Media', 'Uso mixto'),
-            ('Licencia de Construcción Multifamiliar', 'Uso residencial múltiple'),
-            ('Licencia de Remodelación', 'Modificación de estructura'),
+            ('DEMOLICIÓN TOTAL - MODALIDAD "A"', 'VIVIENDA'),
+            ('EDIFICACIÓN MODALIDAD "B"', 'VIVIENDA MULTIFAMILIAR'),
+            ('EDIFICACIÓN MODALIDAD "A" - TECHO PROPIO', 'VIVIENDA'),
         ]
-        
         for nombre, uso in licencias:
-            licencia, created = LicenciaUso.objects.get_or_create(
-                nombre_licencia=nombre,
-                defaults={'uso_licencia': uso}
-            )
-            if created:
-                self.stdout.write(f'  ✓ Licencia "{nombre}" creada')
+            obj, creado = LicenciaUso.objects.get_or_create(nombre_licencia=nombre, defaults={'uso_licencia': uso})
+            self.stdout.write(f'{"✓" if creado else "-"} Licencia: {nombre}')
 
-        # Crear zonificaciones
-        zonificaciones = [
-            ('RDM', 'Lima', 'Lima', 'Miraflores'),
-            ('RDB', 'Lima', 'Lima', 'San Isidro'),
-            ('CZ', 'Lima', 'Lima', 'Lima'),
-            ('I1', 'Lima', 'Lima', 'San Luis'),
-            ('RDM', 'Lima', 'Lima', 'Surco'),
-            ('CV', 'Callao', 'Callao', 'Callao'),
-        ]
-        
-        for zona, depto, prov, dist in zonificaciones:
-            zonificacion, created = Zonificacion.objects.get_or_create(
-                zonificacion=zona,
-                departamento=depto,
-                provincia=prov,
-                distrito=dist
-            )
-            if created:
-                self.stdout.write(f'  ✓ Zonificación "{zona} - {dist}" creada')
-
-        # Crear responsables de obra
+    def crear_responsables(self):
         responsables = [
-            ('Ing. Juan Carlos Pérez García', 'CIP 12345'),
-            ('Arq. María Elena Rodríguez López', 'CAP 67890'),
-            ('Ing. Carlos Alberto Mendoza Silva', 'CIP 23456'),
-            ('Arq. Ana Sofía Vásquez Torres', 'CAP 78901'),
-            ('Ing. Roberto Miguel Fernández Cruz', 'CIP 34567'),
+            ("ING. RICHARD FRANKLIN LLONTOP PUICON", "CIP. 162464"),
+            ("ARQ. MARIANELA PALACIOS MEDINA", "CAP. 5733"),
+            ("ING. SANTOS CRISTOBAL CASTILLO FARROÑAN", "CIP. 27862"),
         ]
-        
         for nombre, cip in responsables:
-            responsable, created = ResponsableObra.objects.get_or_create(
-                nombre=nombre,
-                defaults={'cip_cap': cip}
-            )
-            if created:
-                self.stdout.write(f'  ✓ Responsable "{nombre}" creado')
+            obj, creado = ResponsableObra.objects.get_or_create(nombre=nombre, defaults={'cip_cap': cip})
+            self.stdout.write(f'{"✓" if creado else "-"} Responsable: {nombre}')
 
-        self.stdout.write(self.style.SUCCESS('Datos de ejemplo creados exitosamente!'))
-        
-        # Instrucciones adicionales
-        self.stdout.write('\n' + '='*60)
-        self.stdout.write(self.style.WARNING('INSTRUCCIONES ADICIONALES:'))
-        self.stdout.write('1. Crear un superusuario: python manage.py createsuperuser')
-        self.stdout.write('2. Acceder al admin: http://localhost:8000/admin/')
-        self.stdout.write('3. Asignar usuarios a grupos desde el admin')
-        self.stdout.write('4. El sistema está listo para usar!')
-        self.stdout.write('='*60) 
+    def crear_supervisores(self):
+        supervisores = [
+            ("ARQ. DEL CARPIO GABRIELLI CARLA SOFIA", "CAP. 13560"),
+            ("ARQ. SALAZAR GARNIQUE JUAN ALEJANDRO", "CAP. 5596"),
+            ("ARQ. REAÑO ALVITEZ JACQUELINE IVETTE", "CAP. 6582"),
+            ("ARQ. HERRERA WESTTER SYLVIA CONSUELO", "CAP. 5409"),
+            ("ARQ. BARTRA GROSSO FERNANDO", "CAP. 5634"),
+            ("ARQ. WONG DIAZ JORGE JAMES", "CAP. 6580"),
+            ("ARQ. ARRIBASPLATA PIZARRO HENRY ALBERTO", "CAP. 8448"),
+            ("ARQ. ALVAREZ GARCIA VICTOR HUGO", "CAP. 6530"),
+            ("ARQ. QUINTANA ACUÑA MARIA GUMERCINDA", "CAP. 6525"),
+            ("ARQ. GARCIA ARRASCUE MARIETTA", "CAP. 7330"),
+            ("ARQ. LARREA ALVARADO MAGALLY AGUSTINA", "CAP. 5471"),
+            ("ARQ. CHALIQUE CASTRO WILDER ENRIQUE", "CAP. 3673"),
+            ("ARQ. RUBIO SÁNCHEZ GRETTY", "CAP. 7162"),
+            ("ARQ. MORALES LOPEZ JUAN GUILLERMO", "CAP. 6816"),
+            ("ARQ. LEON JERI IRENE AMALIA", "CAP. 6019"),
+            ("ARQ. VARGAS MACHUCA ACEVEDO JALMAR ISAAC", "CAP. 7275"),
+            ("ARQ. REATEGUI OSORES EDGARDO", "CAP. 4599"),
+            ("ARQ. OLORTE GARCIA LUIS HUMBERTO", "CAP. 5334"),
+            ("ARQ. AITKEN GUTIERREZ JENIFFER HILDA", "CAP. 5581"),
+            ("ARQ. NIZAMA VASQUEZ LUIS ENRIQUE", "CAP. 12948"),
+            ("ARQ. IBAÑEZ BARCA CHRISTIAN ANTONIO", "CAP. 7382"),
+            ("ARQ. DIAZ CASTILLO ILIAN ANGELICA", "CAP. 6785"),
+            ("ARQ. GARBOZA SANCHEZ CARLOS ALBERTO", "CAP. 12922"),
+            ("ARQ. LUNA VARGAS MILTON CESAR AUGUSTO", "CAP. 6102"),
+            ("ARQ. PAIRAZAMAN ZULOETA OSWALDO MARTIN", "CAP. 9736"),
+            ("ARQ. JIMENEZ NUÑEZ BENJAMIN", "CAP. 12227"),
+            ("ARQ. FLORES TABOADA ERIKA LISSET ROSSYMERY DE AMERICA", "CAP. 26493"),
+            ("ARQ. BARTUREN CARRASCO YULIANA CECILIA", "CAP. 19216"),
+        ]
+        for nombre, cip in supervisores:
+            obj, creado = SupervisorObra.objects.get_or_create(nombre=nombre, defaults={'cip_cap': cip})
+            self.stdout.write(f'{"✓" if creado else "-"} Supervisor: {nombre}')
+
+    def crear_zonificaciones(self):
+        zonificaciones = [
+            ("ZPA", "ZONA DE PROTECCIÓN ARQUEOLÓGICA"),
+            ("ZPE", "ZONA DE PROTECCIÓN ECOLÓGICA"),
+            ("ZM", "ZONA MONUMENTAL"),
+            ("ZA", "ZONA AGRÍCOLA"),
+            ("I2", "INDUSTRIA LIVIANA"),
+            ("OU", "USOS ESPECIALES"),
+            ("ZRP", "RECREACIÓN"),
+            ("H", "SALUD"),
+            ("E", "EDUCACIÓN"),
+            ("CE", "COMERCIO ESPECIALIZADO"),
+            ("RDA", "ZONA RESIDENCIAL DENSIDAD ALTA"),
+            ("RDB", "ZONA RESIDENCIAL DENSIDAD BAJA"),
+            ("RDM", "ZONA RESIDENCIAL DENSIDAD MEDIA"),
+        ]
+
+        for codigo, descripcion in zonificaciones:
+            obj, creado = Zonificacion.objects.get_or_create(
+                zonificacion=codigo,
+                defaults={
+                    'descripcion': descripcion,
+                    'departamento': 'Lambayeque',
+                    'provincia': 'Lambayeque',
+                    'distrito': 'Lambayeque'
+                }
+            )
+            self.stdout.write(f'{"✓" if creado else "-"} Zonificación: {codigo}')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Resolucion, DetalleResolucion, ResponsableObra, Zonificacion, LicenciaUso
+from .models import Resolucion, DetalleResolucion, ResponsableObra, Zonificacion, LicenciaUso, SupervisorObra
 
 
 @admin.register(ResponsableObra)
@@ -8,9 +8,14 @@ class ResponsableObraAdmin(admin.ModelAdmin):
     search_fields = ['nombre', 'cip_cap']
 
 
+@admin.register(SupervisorObra)
+class SupervisorObraAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'cip_cap']
+    search_fields = ['nombre', 'cip_cap']
+
 @admin.register(Zonificacion)
 class ZonificacionAdmin(admin.ModelAdmin):
-    list_display = ['zonificacion', 'departamento', 'provincia', 'distrito']
+    list_display = ['zonificacion','descripcion', 'departamento', 'provincia', 'distrito']
     list_filter = ['departamento', 'provincia']
     search_fields = ['zonificacion', 'distrito']
 
