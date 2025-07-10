@@ -85,10 +85,11 @@ class DetalleResolucion(models.Model):
     semisotano = models.BooleanField(default=False)
     azotea = models.BooleanField(default=False)
     responsable_obra = models.ForeignKey(ResponsableObra, on_delete=models.PROTECT)
-    supervisor_obra = models.ForeignKey(SupervisorObra, on_delete=models.PROTECT)
+    supervisor_obra = models.ForeignKey(SupervisorObra, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
-        return f"Resolución: {self.resolucion} / Responsable: {self.responsable_obra} / Supervisor: {self.supervisor_obra}"
+        supervisor_info = f" / Supervisor: {self.supervisor_obra}" if self.supervisor_obra else " / Sin supervisor"
+        return f"Resolución: {self.resolucion} / Responsable: {self.responsable_obra}{supervisor_info}"
 
     class Meta:
         verbose_name = "Detalle de Resolución"

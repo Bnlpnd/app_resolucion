@@ -9,4 +9,5 @@ urlpatterns = [
     path('resoluciones/nueva/', views.crear_resolucion, name='crear_resolucion'),
     path('resoluciones/<int:pk>/editar/', views.editar_resolucion, name='editar_resolucion'),
     path('mis-resoluciones/', views.mis_resoluciones, name='mis_resoluciones'),
+    path('resoluciones/exportar-excel/', views.exportar_excel_form, name='exportar_excel'),
 ] 

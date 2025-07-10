@@ -8,9 +8,13 @@ from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font
+from datetime import datetime
 
 from .models import Resolucion, DetalleResolucion, ResponsableObra, Zonificacion, LicenciaUso
-from .forms import CustomUserCreationForm, ResolucionForm, DetalleResolucionForm, ResolucionFilterForm
+from .forms import CustomUserCreationForm, ResolucionForm, DetalleResolucionForm, ResolucionFilterForm, ExportarExcelForm
 
 
 def registro(request):
@@ -225,3 +229,81 @@ def mis_resoluciones(request):
         'title': 'Mis Resoluciones'
     }
     return render(request, 'resoluciones/lista_resoluciones.html', context)
+
+
+@login_required
+def exportar_excel_form(request):
+    """Vista para mostrar el formulario de exportación a Excel"""
+    user_groups = [group.name for group in request.user.groups.all()]
+    
+    # Solo usuarios del grupo Obras pueden acceder
+    if 'Obras' not in user_groups:
+        messages.error(request, 'No tiene permisos para acceder a esta funcionalidad.')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        form = ExportarExcelForm(request.POST)
+        if form.is_valid():
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            fecha_fin = form.cleaned_data['fecha_fin']
+            
+            # Filtrar resoluciones por rango de fechas
+            resoluciones = Resolucion.objects.filter(
+                fecha_emision__gte=fecha_inicio,
+                fecha_emision__lte=fecha_fin
+            ).order_by('fecha_emision')
+            
+            if not resoluciones.exists():
+                messages.warning(request, f'No se encontraron resoluciones en el rango de fechas del {fecha_inicio.strftime("%d/%m/%Y")} al {fecha_fin.strftime("%d/%m/%Y")}.')
+                return render(request, 'resoluciones/exportar_excel.html', {'form': form})
+            
+            # Generar archivo Excel
+            return generar_excel_resoluciones(resoluciones)
+    else:
+        form = ExportarExcelForm()
+    
+    context = {
+        'form': form,
+        'title': 'Exportar Resoluciones a Excel'
+    }
+    return render(request, 'resoluciones/exportar_excel.html', context)
+
+
+def generar_excel_resoluciones(resoluciones):
+    """Función para generar el archivo Excel con las resoluciones"""
+    # Crear un nuevo workbook de Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Resoluciones de Obras"
+    
+    # Definir encabezados
+    encabezados = ['N°', 'Serie Documental', 'Fecha', 'Asunto', 'Folios', 'Observaciones']
+    
+    # Escribir encabezados en la primera fila
+    for col, encabezado in enumerate(encabezados, 1):
+        cell = ws.cell(row=1, column=col, value=encabezado)
+        cell.font = Font(bold=True)
+    
+    # Escribir datos de las resoluciones
+    for row, resolucion in enumerate(resoluciones, 2):
+        ws.cell(row=row, column=1, value=row-1)  # N° correlativo
+        ws.cell(row=row, column=2, value=f"RESOLUCION N° {resolucion.num_resolucion}-MPL-GDTI-SGDTyC-UFOPCUyL ") # Serie Documental
+        ws.cell(row=row, column=3, value=resolucion.fecha_emision.strftime('%d/%m/%Y'))  # Fecha
+        ws.cell(row=row, column=4, value=resolucion.administrado)  # Asunto
+        ws.cell(row=row, column=5, value='1')  # Folios (siempre 1)
+        ws.cell(row=row, column=6, value='-')  # Observaciones (siempre -)
+    
+    # Ajustar ancho de columnas
+    column_widths = [5, 20, 12, 30, 8, 15]
+    for col, width in enumerate(column_widths, 1):
+        ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = width
+    
+    # Crear respuesta HTTP con el archivo Excel
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="resoluciones_obras.xlsx"'
+    
+    # Guardar el workbook en la respuesta
+    wb.save(response)
+    return response

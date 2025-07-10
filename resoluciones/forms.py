@@ -74,13 +74,13 @@ class DetalleResolucionForm(forms.ModelForm):
         max_length=100, 
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        help_text="O registrar nuevo supervisor"
+        help_text="O registrar nuevo supervisor (opcional)"
     )
     nuevo_supervisor_cip_cap = forms.CharField(
         max_length=50, 
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        help_text="CIP/CAP del nuevo supervisor"
+        help_text="CIP/CAP del nuevo supervisor (opcional)"
     )
 
     class Meta:
@@ -133,16 +133,15 @@ class DetalleResolucionForm(forms.ModelForm):
             if ResponsableObra.objects.filter(nombre=nuevo_responsable).exists():
                 self.add_error('nuevo_responsable', f"Ya existe un responsable con el nombre '{nuevo_responsable}'.")
 
-        # Validar SUPERVISOR de obra
-        if not supervisor_obra and not nuevo_supervisor:
-            self.add_error('supervisor_obra', "Debe seleccionar un supervisor existente o registrar uno nuevo.")
-
+        # Validar SUPERVISOR de obra (OPCIONAL - solo validar si se proporciona información parcial)
+        # Si se está registrando nuevo supervisor, ambos campos son requeridos
         if nuevo_supervisor and not nuevo_supervisor_cip_cap:
             self.add_error('nuevo_supervisor_cip_cap', "Si registra un nuevo supervisor, debe completar también el CIP/CAP.")
 
         if nuevo_supervisor_cip_cap and not nuevo_supervisor:
             self.add_error('nuevo_supervisor', "Si registra un CIP/CAP del supervisor, debe completar también el nombre del supervisor.")
 
+        # Si ambos están completos, verificar que no exista ya
         if nuevo_supervisor and nuevo_supervisor_cip_cap:
             if SupervisorObra.objects.filter(nombre=nuevo_supervisor).exists():
                 self.add_error('nuevo_supervisor', f"Ya existe un supervisor con el nombre '{nuevo_supervisor}'.")
@@ -217,4 +216,34 @@ class ResolucionFilterForm(forms.Form):
         required=False,
         empty_label="Todas las licencias",
         widget=forms.Select(attrs={'class': 'form-select'})
-    ) 
+    )
+
+
+class ExportarExcelForm(forms.Form):
+    fecha_inicio = forms.DateField(
+        label="Fecha de inicio",
+        widget=forms.DateInput(attrs={
+            'class': 'form-control flatpickr',
+            'placeholder': 'DD/MM/YYYY'
+        }),
+        help_text="Fecha desde la cual filtrar las resoluciones"
+    )
+    fecha_fin = forms.DateField(
+        label="Fecha de fin", 
+        widget=forms.DateInput(attrs={
+            'class': 'form-control flatpickr',
+            'placeholder': 'DD/MM/YYYY'
+        }),
+        help_text="Fecha hasta la cual filtrar las resoluciones"
+    )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha_inicio = cleaned_data.get('fecha_inicio')
+        fecha_fin = cleaned_data.get('fecha_fin')
+        
+        if fecha_inicio and fecha_fin:
+            if fecha_inicio > fecha_fin:
+                raise forms.ValidationError("La fecha de inicio debe ser anterior o igual a la fecha de fin.")
+        
+        return cleaned_data 

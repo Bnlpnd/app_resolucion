@@ -355,7 +355,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="{{ detalle_form.supervisor_obra.id_for_label }}" class="form-label">
-                            Seleccionar Supervisor Existente <span class="text-danger">*</span>
+                            Seleccionar Supervisor Existente <span class="text-muted">(opcional)</span>
                         </label>
                         {{ detalle_form.supervisor_obra }}
                         {% if detalle_form.supervisor_obra.errors %}
@@ -431,11 +431,11 @@
                     </p>
                     
                     <p class="card-text small">
-                        <strong>Responsable de Obra:</strong> Puede seleccionar un responsable existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
+                        <strong>Responsable de Obra:</strong> <span class="text-danger">OBLIGATORIO.</span> Puede seleccionar un responsable existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
                     </p>
 
                     <p class="card-text small">
-                        <strong>Supervisor de Obra:</strong> Puede seleccionar un supervisor existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
+                        <strong>Supervisor de Obra:</strong> <span class="text-muted">OPCIONAL.</span> Puede seleccionar un supervisor existente o registrar uno nuevo completando ambos campos (nombre y CIP/CAP).
                     </p>
                     
                     {% if resolucion %}

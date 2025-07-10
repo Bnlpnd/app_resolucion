@@ -181,16 +181,24 @@
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="bi bi-person-badge"></i> Supervisor de Obra
+                    <i class="bi bi-person-check"></i> Supervisor de Obra
                 </h5>
             </div>
             <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h6 class="mb-1">{{ detalle.supervisor_obra.nombre }}</h6>
-                        <p class="text-muted mb-0">{{ detalle.supervisor_obra.cip_cap }}</p>
+                {% if detalle.supervisor_obra %}
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="mb-1">{{ detalle.supervisor_obra.nombre }}</h6>
+                            <p class="text-muted mb-0">CIP/CAP: {{ detalle.supervisor_obra.cip_cap }}</p>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <div class="text-center text-muted">
+                        <i class="bi bi-person-dash" style="font-size: 2rem;"></i>
+                        <p class="mb-0 mt-2">No se ha asignado supervisor para esta obra</p>
+                        <small class="text-muted">El supervisor de obra es opcional</small>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% else %}
